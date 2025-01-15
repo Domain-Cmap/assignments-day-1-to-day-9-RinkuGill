@@ -1,0 +1,162 @@
+ Q. Design a stack that supports push, pop, top, and retrieving the minimum element in
+ constant time.
+ Implement the MinStack class:
+ MinStack() initializes the stack object.
+ void push(int val) pushes the element val onto the stack.
+ void pop() removes the element on the top of the stack.
+ int top() gets the top element of the stack.
+ int getMin() retrieves the minimum element in the stack.
+ You must implement a solution with O(1) time complexity for each function.
+ Example 1:
+ Input
+ ["MinStack","push","push","push","getMin","pop","top","getMin"]
+ [[],[-2],[0],[-3],[],[],[],[]]
+ Output
+ [null,null,null,null,-3,null,0,-2]
+ Explanation
+ MinStack minStack = new MinStack();
+ minStack.push(-2);
+ minStack.push(0);
+ minStack.push(-3);
+ minStack.getMin(); // return-3
+ minStack.pop();
+ minStack.top(); // return 0
+ minStack.getMin(); // return-2
+ CODE:
+ #include <iostream>
+ #include <stack>
+ #include <limits.h>
+ class MinStack {
+ private:
+ std::stack<int> stack;
+ std::stack<int> minStack;
+ public:
+ MinStack() {
+ // Constructor initializes an empty stack
+ }
+ void push(int val) {
+ stack.push(val);
+ // Push onto minStack if it's empty or val is less than or equal to the current minimum
+ if (minStack.empty() || val <= minStack.top()) {
+ minStack.push(val);
+ }
+ }
+ void pop() {
+ if (stack.top() == minStack.top()) {
+ minStack.pop();
+ }
+ stack.pop();
+ }
+ int top() {
+ return stack.top();
+ }
+ int getMin() {
+ return minStack.top();
+ }
+ };
+ int main() {
+ MinStack minStack;
+ minStack.push(-2);
+ minStack.push(-3);
+ std::cout << minStack.getMin() << std::endl; // Output:-3
+ minStack.pop();
+ std::cout << minStack.top() << std::endl; // Output: 0
+ std::cout << minStack.getMin() << std::endl; // Output:-2
+ return 0;
+ }
+
+
+
+
+
+
+
+ Example 2:
+ Input:
+ ["MinStack", "push", "push", "push", "push", "getMin", "pop", "getMin", "top", "getMin"]
+ [[], [5], [3], [7], [3], [], [], [], [], []]
+ Output
+ [null, null, null, null, null, 3, null, 3, 7, 3]
+ Explanation:
+ MinStack minStack = new MinStack();
+ minStack.push(5); # Stack: [5], MinStack: [5]
+ minStack.push(3); # Stack: [5, 3], MinStack: [5, 3]
+ minStack.push(7); # Stack: [5, 3, 7], MinStack: [5, 3]
+ minStack.push(3); # Stack: [5, 3, 7, 3], MinStack: [5, 3, 3]
+ minStack.getMin(); # Returns 3
+ minStack.pop();
+ # Removes 3; Stack: [5, 3, 7], MinStack: [5, 3]
+ minStack.getMin(); # Returns 3
+ minStack.top();
+ # Returns 7
+ minStack.getMin(); # Returns 3
+ ● Minimum values are maintained as: [5]
+ [5, 3]
+ ● After pops, the minimum values update accordingly.
+
+
+
+
+  example 3 
+   Q. Given a circular integer array nums (i.e., the next element of nums[nums.length- 1] is
+ nums[0]), return the next greater number for every element in nums.
+ The next greater number of a number x is the first greater number to its traversing-order next
+ in the array, which means you could search circularly to find its next greater number. If it
+ doesn't exist, return-1 for this number.
+ Example 1:
+ Input: nums = [1,2,1]
+ Output: [2,-1,2]
+ Explanation:
+ ●
+ ●
+ ●
+ The first 1's next greater number is 2;
+ The number 2 can't find next greater number.
+ The second 1's next greater number needs to search circularly, which is also 2.
+ Example 2:
+ Input: nums = [1,2,3,4,3]
+ Output: [2,3,4,-1,4]
+ Constraints:
+ ●
+ ●
+ 1 <=nums.length <= 104-109 <= nums[i] <= 109
+ Reference :
+ CODE:
+ https://leetcode.com/problems/next-greater-element-ii/description/
+ #include <iostream>
+ #include <vector>
+ #include <stack>
+ std::vector<int> nextGreaterElements(const std::vector<int>& nums) {
+ int n = nums.size();
+ std::vector<int> result(n,-1); // Initialize result array with-1
+ std::stack<int> stk; // Stack to store indices
+ // Iterate through the array twice (to simulate circular behavior)
+ for (int i = 0; i < 2 * n; ++i) {
+ int num = nums[i % n];
+ // Check for next greater element
+ while (!stk.empty() && nums[stk.top()] < num) {
+ result[stk.top()] = num;
+ stk.pop();
+ }
+ // Push index onto stack for first pass only
+ if (i < n) {
+ stk.push(i);
+ }
+ }
+ return result;
+ }
+ int main() {
+ std::vector<int> nums1 = {1, 2, 1};
+ std::vector<int> result1 = nextGreaterElements(nums1);
+ for (int num : result1) {
+ std::cout << num << " ";
+ }
+ std::cout << std::endl; // Output: 2-1 2
+ std::vector<int> nums2 = {1, 2, 3, 4, 3};
+ std::vector<int> result2 = nextGreaterElements(nums2);
+ for (int num : result2) {
+ std::cout << num << " ";
+ }
+ std::cout << std::endl; // Output: 2 3 4-1 4
+ return 0;
+ }
